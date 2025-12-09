@@ -21,25 +21,117 @@
       justify-content: center;
       min-height: 100vh;
       margin: 0;
-      background-image: url("https://files.catbox.moe/0xmnxl.jpg");
-      background-size: cover;
-      background-position: center;
-      background-attachment: fixed;
+      background-color: #000;
       font-family: 'Exo 2', sans-serif;
       color: #e5f5f1;
       position: relative;
       overflow-x: hidden;
     }
 
-    body::before {
-      content: '';
-      position: absolute;
+    /* Glowing Background Elements */
+    .glowing-bg {
+      position: fixed;
       top: 0;
       left: 0;
       width: 100%;
       height: 100%;
-      background: linear-gradient(135deg, rgba(0, 20, 40, 0.85) 0%, rgba(0, 40, 60, 0.7) 100%);
+      z-index: -2;
+      overflow: hidden;
+    }
+
+    .glow-circle {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(60px);
+      opacity: 0.7;
+      animation: float 15s infinite linear;
+    }
+
+    .glow-circle:nth-child(1) {
+      width: 400px;
+      height: 400px;
+      background: radial-gradient(circle, rgba(0, 255, 170, 0.8) 0%, rgba(0, 255, 170, 0) 70%);
+      top: 10%;
+      left: 10%;
+      animation-duration: 20s;
+      animation-delay: 0s;
+    }
+
+    .glow-circle:nth-child(2) {
+      width: 500px;
+      height: 500px;
+      background: radial-gradient(circle, rgba(0, 136, 255, 0.7) 0%, rgba(0, 136, 255, 0) 70%);
+      top: 60%;
+      right: 5%;
+      animation-duration: 25s;
+      animation-delay: 5s;
+    }
+
+    .glow-circle:nth-child(3) {
+      width: 300px;
+      height: 300px;
+      background: radial-gradient(circle, rgba(255, 0, 255, 0.5) 0%, rgba(255, 0, 255, 0) 70%);
+      bottom: 10%;
+      left: 20%;
+      animation-duration: 18s;
+      animation-delay: 10s;
+    }
+
+    .glow-circle:nth-child(4) {
+      width: 450px;
+      height: 450px;
+      background: radial-gradient(circle, rgba(0, 255, 255, 0.6) 0%, rgba(0, 255, 255, 0) 70%);
+      top: 20%;
+      right: 20%;
+      animation-duration: 22s;
+      animation-delay: 15s;
+    }
+
+    .scan-lines {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(
+        to bottom,
+        transparent 50%,
+        rgba(0, 255, 170, 0.03) 50%
+      );
+      background-size: 100% 4px;
       z-index: -1;
+      opacity: 0.3;
+      pointer-events: none;
+    }
+
+    .grid-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-image: 
+        linear-gradient(rgba(0, 255, 170, 0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 255, 170, 0.05) 1px, transparent 1px);
+      background-size: 50px 50px;
+      z-index: -1;
+      opacity: 0.4;
+      pointer-events: none;
+    }
+
+    @keyframes float {
+      0%, 100% {
+        transform: translate(0, 0) scale(1);
+      }
+      25% {
+        transform: translate(30px, 40px) scale(1.1);
+      }
+      50% {
+        transform: translate(-20px, 60px) scale(0.9);
+      }
+      75% {
+        transform: translate(40px, -30px) scale(1.05);
+      }
     }
 
     .container {
@@ -57,6 +149,7 @@
       border: 1px solid rgba(0, 255, 170, 0.2);
       position: relative;
       overflow: hidden;
+      z-index: 1;
     }
 
     .container::before {
@@ -212,11 +305,36 @@
         flex-direction: column;
         align-items: center;
       }
+      
+      .glow-circle {
+        filter: blur(40px);
+      }
+      
+      .glow-circle:nth-child(1),
+      .glow-circle:nth-child(2),
+      .glow-circle:nth-child(3),
+      .glow-circle:nth-child(4) {
+        width: 250px;
+        height: 250px;
+      }
     }
   </style>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
+  <!-- Glowing Background Elements -->
+  <div class="glowing-bg">
+    <div class="glow-circle"></div>
+    <div class="glow-circle"></div>
+    <div class="glow-circle"></div>
+    <div class="glow-circle"></div>
+  </div>
+  
+  <!-- Scan lines effect -->
+  <div class="scan-lines"></div>
+  
+  <!-- Grid overlay -->
+  <div class="grid-overlay"></div>
 
   <div class="container">
     <h1 class="title">JUNE-X SESSION</h1>
