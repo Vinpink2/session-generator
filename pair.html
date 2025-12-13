@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Pair Code</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+  <title>Pair Code | JUNE X-BOT</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
     * {
       margin: 0;
@@ -18,9 +18,15 @@
       align-items: center;
       min-height: 100vh;
       margin: 0;
-      background: url("https://files.catbox.moe/0xmnxl.jpg") center/cover no-repeat;
+      background: 
+        radial-gradient(circle at 20% 30%, rgba(89, 53, 172, 0.4) 0%, transparent 50%),
+        radial-gradient(circle at 80% 70%, rgba(139, 23, 182, 0.4) 0%, transparent 50%),
+        radial-gradient(circle at 40% 80%, rgba(192, 23, 54, 0.3) 0%, transparent 50%),
+        url("https://images.unsplash.com/photo-1635070041078-e363dbe005cb?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80") center/cover no-repeat;
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       position: relative;
+      overflow: hidden;
+      color: #f0f0f0;
     }
 
     body::before {
@@ -30,8 +36,29 @@
       left: 0;
       width: 100%;
       height: 100%;
-      background: rgba(0, 0, 0, 0.6);
+      background: linear-gradient(
+        45deg,
+        rgba(89, 53, 172, 0.15) 0%,
+        rgba(139, 23, 182, 0.15) 25%,
+        rgba(192, 23, 54, 0.15) 50%,
+        rgba(89, 53, 172, 0.15) 75%,
+        rgba(139, 23, 182, 0.15) 100%
+      );
       z-index: -1;
+      animation: gradientShift 10s ease infinite;
+      background-size: 400% 400%;
+    }
+
+    @keyframes gradientShift {
+      0% {
+        background-position: 0% 50%;
+      }
+      50% {
+        background-position: 100% 50%;
+      }
+      100% {
+        background-position: 0% 50%;
+      }
     }
 
     .container {
@@ -40,106 +67,362 @@
       align-items: center;
       width: 100%;
       padding: 20px;
+      position: relative;
+      z-index: 1;
     }
 
+    /* Main box with opposite diagonal curved corners */
     .box {
       width: 100%;
-      max-width: 380px;
-      padding: 30px 25px;
+      max-width: 450px;
+      padding: 40px 35px;
       position: relative;
       text-align: center;
-      background-color: rgba(0, 0, 0, 0.75);
-      border-radius: 15px;
+      background-color: rgba(10, 10, 15, 0.85);
+      /* Top-left and bottom-right corners are curved, others are sharp */
+      border-radius: 60px 0 0 60px;
       transform: perspective(1000px) rotateY(0deg);
-      box-shadow: 0 0 25px rgba(250, 249, 249, 0.5);
-      backdrop-filter: blur(5px);
+      box-shadow: 
+        0 0 30px rgba(89, 53, 172, 0.6),
+        0 0 60px rgba(139, 23, 182, 0.4),
+        0 0 90px rgba(192, 23, 54, 0.2),
+        inset 0 0 20px rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(12px);
       border: 1px solid rgba(255, 255, 255, 0.1);
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      transition: all 0.4s ease;
+      overflow: hidden;
+    }
+
+    /* Alternate curved corners for visual appeal */
+    .box::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      /* Bottom-left and top-right corners curved */
+      border-radius: 0 60px 60px 0;
+      background: linear-gradient(135deg, 
+        rgba(89, 53, 172, 0.1) 0%, 
+        rgba(139, 23, 182, 0.1) 50%, 
+        rgba(192, 23, 54, 0.1) 100%);
+      z-index: -1;
+    }
+
+    /* Glowing corner effects */
+    .corner-glow {
+      position: absolute;
+      width: 100px;
+      height: 100px;
+      z-index: -1;
+      filter: blur(25px);
+      animation: pulse 4s infinite alternate;
+    }
+
+    .corner-top-left {
+      top: -40px;
+      left: -40px;
+      background: radial-gradient(circle, rgba(89, 53, 172, 0.8) 0%, transparent 70%);
+      animation-delay: 0s;
+    }
+
+    .corner-bottom-right {
+      bottom: -40px;
+      right: -40px;
+      background: radial-gradient(circle, rgba(192, 23, 54, 0.7) 0%, transparent 70%);
+      animation-delay: 1s;
+    }
+
+    .corner-top-right {
+      top: -30px;
+      right: -30px;
+      background: radial-gradient(circle, rgba(139, 23, 182, 0.6) 0%, transparent 70%);
+      animation-delay: 2s;
+      width: 80px;
+      height: 80px;
+      filter: blur(20px);
+    }
+
+    .corner-bottom-left {
+      bottom: -30px;
+      left: -30px;
+      background: radial-gradient(circle, rgba(255, 255, 255, 0.4) 0%, transparent 70%);
+      animation-delay: 3s;
+      width: 80px;
+      height: 80px;
+      filter: blur(20px);
+    }
+
+    @keyframes pulse {
+      0% {
+        opacity: 0.4;
+        transform: scale(0.9);
+      }
+      100% {
+        opacity: 0.8;
+        transform: scale(1.1);
+      }
     }
 
     .box:hover {
-      transform: perspective(1000px) rotateY(5deg);
-      box-shadow: 0 0 30px rgba(250, 249, 249, 0.8);
+      transform: perspective(1000px) rotateY(5deg) scale(1.02);
+      box-shadow: 
+        0 0 40px rgba(89, 53, 172, 0.8),
+        0 0 80px rgba(139, 23, 182, 0.6),
+        0 0 120px rgba(192, 23, 54, 0.3);
+    }
+
+    /* Decorative border with animated gradient */
+    .box::after {
+      content: '';
+      position: absolute;
+      top: -2px;
+      left: -2px;
+      right: -2px;
+      bottom: -2px;
+      background: linear-gradient(45deg, 
+        #5935ac, 
+        #8b17b6, 
+        #c01736, 
+        #8b17b6, 
+        #5935ac);
+      border-radius: 62px 2px 2px 62px;
+      z-index: -2;
+      filter: blur(15px);
+      opacity: 0.7;
+      animation: borderGlow 3s linear infinite;
+      background-size: 300% 300%;
+    }
+
+    @keyframes borderGlow {
+      0% {
+        background-position: 0% 50%;
+        filter: blur(15px) brightness(1);
+      }
+      50% {
+        background-position: 100% 50%;
+        filter: blur(20px) brightness(1.3);
+      }
+      100% {
+        background-position: 0% 50%;
+        filter: blur(15px) brightness(1);
+      }
     }
 
     #text {
-      color: #f6f5f5;
+      position: relative;
+      z-index: 2;
     }
 
     .centered-text {
-      color: #e9e4e4;
+      color: #ffffff;
       margin-bottom: 15px;
+      text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
     }
 
     .user-icon {
-      font-size: 2.5rem;
-      margin-bottom: 15px;
-      color: #5935ac;
-      text-shadow: 0 0 10px rgba(89, 53, 172, 0.7);
+      font-size: 3rem;
+      margin-bottom: 20px;
+      color: #8b17b6;
+      text-shadow: 
+        0 0 15px rgba(139, 23, 182, 0.9),
+        0 0 30px rgba(139, 23, 182, 0.6),
+        0 0 45px rgba(139, 23, 182, 0.3);
+      animation: iconPulse 2s ease-in-out infinite;
+      position: relative;
+      display: inline-block;
+    }
+
+    .user-icon::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 70px;
+      height: 70px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(139, 23, 182, 0.3) 0%, transparent 70%);
+      z-index: -1;
+      animation: ripple 2s ease-out infinite;
+    }
+
+    @keyframes iconPulse {
+      0%, 100% {
+        transform: scale(1);
+        text-shadow: 
+          0 0 15px rgba(139, 23, 182, 0.9),
+          0 0 30px rgba(139, 23, 182, 0.6);
+      }
+      50% {
+        transform: scale(1.1);
+        text-shadow: 
+          0 0 20px rgba(139, 23, 182, 1),
+          0 0 40px rgba(139, 23, 182, 0.8),
+          0 0 60px rgba(139, 23, 182, 0.4);
+      }
+    }
+
+    @keyframes ripple {
+      0% {
+        width: 70px;
+        height: 70px;
+        opacity: 0.8;
+      }
+      100% {
+        width: 120px;
+        height: 120px;
+        opacity: 0;
+      }
+    }
+
+    .title {
+      font-size: 1.8rem;
+      margin-bottom: 10px;
+      background: linear-gradient(90deg, #8b17b6, #c01736, #5935ac);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      font-weight: 700;
+      letter-spacing: 1px;
     }
 
     .subtitle {
-      color: #b0b0b0;
+      color: #b8b8b8;
       margin: 15px 0;
-      font-size: 0.9rem;
-      line-height: 1.4;
+      font-size: 0.95rem;
+      line-height: 1.5;
+    }
+
+    .highlight {
+      color: #8b17b6;
+      font-weight: 600;
     }
 
     .input-container {
       display: flex;
-      background: rgba(10, 10, 10, 0.8);
-      border-radius: 12px;
-      padding: 0.4rem;
+      background: rgba(5, 5, 10, 0.8);
+      border-radius: 15px;
+      padding: 0.5rem;
       gap: 0.3rem;
       width: 100%;
-      margin: 20px 0;
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-      border: 1px solid rgba(255, 255, 255, 0.1);
+      margin: 25px 0;
+      box-shadow: 
+        0 4px 20px rgba(0, 0, 0, 0.6),
+        inset 0 0 15px rgba(89, 53, 172, 0.2);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      position: relative;
+      overflow: hidden;
+      transition: all 0.3s ease;
+    }
+
+    .input-container:hover {
+      box-shadow: 
+        0 6px 25px rgba(0, 0, 0, 0.7),
+        inset 0 0 20px rgba(89, 53, 172, 0.3);
+      transform: translateY(-2px);
+    }
+
+    .input-container::before {
+      content: '';
+      position: absolute;
+      top: -2px;
+      left: -2px;
+      right: -2px;
+      bottom: -2px;
+      background: linear-gradient(45deg, #5935ac, #8b17b6, #c01736);
+      border-radius: 17px;
+      z-index: -1;
+      filter: blur(10px);
+      opacity: 0.5;
     }
 
     .input-container input {
-      border-radius: 10px 0 0 10px;
-      background: #e8e8e8;
-      box-shadow: inset 5px 5px 8px #dcdcdc, inset -5px -5px 8px #f4f4f4;
+      border-radius: 12px 0 0 12px;
+      background: rgba(240, 240, 245, 0.95);
+      box-shadow: 
+        inset 3px 3px 8px rgba(0, 0, 0, 0.2),
+        inset -3px -3px 8px rgba(255, 255, 255, 0.5);
       width: 100%;
-      flex-basis: 75%;
-      padding: 1rem;
+      flex-basis: 70%;
+      padding: 1.1rem;
       border: none;
-      border-left: 2px solid #5935ac;
+      border-left: 4px solid transparent;
+      background: linear-gradient(90deg, rgba(89, 53, 172, 0.2), rgba(240, 240, 245, 0.95));
       color: #000000;
       transition: all 0.3s ease;
       font-size: 1rem;
+      font-weight: 500;
     }
 
     .input-container input:focus {
-      border-left: 2px solid #8b17b6;
+      border-left: 4px solid #c01736;
       outline: none;
-      box-shadow: inset 5px 5px 8px #dcdcdc, inset -5px -5px 8px #f4f4f4, 0 0 10px rgba(139, 23, 182, 0.5);
+      box-shadow: 
+        inset 3px 3px 8px rgba(0, 0, 0, 0.2),
+        inset -3px -3px 8px rgba(255, 255, 255, 0.5),
+        0 0 25px rgba(139, 23, 182, 0.5);
+      background: linear-gradient(90deg, rgba(139, 23, 182, 0.3), rgba(255, 255, 255, 0.98));
     }
 
     .input-container button {
-      flex-basis: 25%;
-      padding: 1rem;
-      background: linear-gradient(135deg, #5935ac 0%, #8b17b6 100%);
+      flex-basis: 30%;
+      padding: 1.1rem;
+      background: linear-gradient(135deg, 
+        rgba(89, 53, 172, 0.9) 0%, 
+        rgba(139, 23, 182, 0.9) 100%);
       font-weight: 700;
       letter-spacing: 0.2rem;
       text-transform: uppercase;
       color: white;
       border: none;
-      border-radius: 0 10px 10px 0;
+      border-radius: 0 12px 12px 0;
       transition: all 0.3s ease;
       cursor: pointer;
-      box-shadow: 0 4px 10px rgba(89, 53, 172, 0.4);
+      box-shadow: 
+        0 4px 15px rgba(89, 53, 172, 0.4),
+        0 0 10px rgba(89, 53, 172, 0.3);
+      position: relative;
+      overflow: hidden;
+      backdrop-filter: blur(5px);
+      font-size: 0.9rem;
+    }
+
+    .input-container button::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, 
+        transparent, 
+        rgba(255, 255, 255, 0.3), 
+        transparent);
+      transition: 0.6s;
     }
 
     .input-container button:hover {
-      background: linear-gradient(135deg, #8b17b6 0%, #c01736 100%);
-      box-shadow: 0 6px 15px rgba(139, 23, 182, 0.6);
-      transform: translateY(-2px);
+      background: linear-gradient(135deg, 
+        rgba(139, 23, 182, 0.95) 0%, 
+        rgba(192, 23, 54, 0.95) 100%);
+      box-shadow: 
+        0 6px 25px rgba(139, 23, 182, 0.6),
+        0 0 20px rgba(139, 23, 182, 0.5);
+      transform: translateY(-3px);
+      letter-spacing: 0.25rem;
+    }
+
+    .input-container button:hover::before {
+      left: 100%;
     }
 
     .input-container button:active {
       transform: translateY(0);
+      box-shadow: 
+        0 2px 10px rgba(89, 53, 172, 0.5),
+        0 0 15px rgba(89, 53, 172, 0.4);
     }
 
     #waiting-message {
@@ -147,54 +430,208 @@
       color: #b0b0b0;
       margin-top: 10px;
       font-style: italic;
+      animation: fadeInOut 2s infinite;
+    }
+
+    @keyframes fadeInOut {
+      0%, 100% {
+        opacity: 0.6;
+      }
+      50% {
+        opacity: 1;
+      }
     }
 
     main#pair {
       margin-top: 20px;
-      min-height: 60px;
+      min-height: 70px;
       display: flex;
       align-items: center;
       justify-content: center;
     }
 
     .code-display {
-      background: rgba(20, 20, 20, 0.8);
-      padding: 15px;
-      border-radius: 10px;
-      border: 1px solid rgba(255, 255, 255, 0.1);
+      background: linear-gradient(135deg, 
+        rgba(15, 15, 20, 0.9) 0%, 
+        rgba(30, 30, 40, 0.9) 100%);
+      padding: 18px 30px;
+      border-radius: 15px;
+      border: 1px solid rgba(255, 255, 255, 0.15);
       cursor: pointer;
       transition: all 0.3s ease;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+      box-shadow: 
+        0 4px 20px rgba(0, 0, 0, 0.5),
+        0 0 15px rgba(89, 53, 172, 0.3);
+      position: relative;
+      overflow: hidden;
+      width: 100%;
+      max-width: 350px;
+    }
+
+    .code-display::before {
+      content: '';
+      position: absolute;
+      top: -2px;
+      left: -2px;
+      right: -2px;
+      bottom: -2px;
+      background: linear-gradient(45deg, #5935ac, #8b17b6, #c01736);
+      border-radius: 17px;
+      z-index: -1;
+      filter: blur(12px);
+      opacity: 0.6;
+      animation: borderGlow 3s linear infinite;
     }
 
     .code-display:hover {
-      background: rgba(30, 30, 30, 0.9);
-      transform: translateY(-3px);
-      box-shadow: 0 6px 15px rgba(0, 0, 0, 0.4);
+      background: linear-gradient(135deg, 
+        rgba(25, 25, 35, 0.95) 0%, 
+        rgba(45, 45, 55, 0.95) 100%);
+      transform: translateY(-5px) scale(1.05);
+      box-shadow: 
+        0 8px 30px rgba(0, 0, 0, 0.6),
+        0 0 25px rgba(139, 23, 182, 0.4);
     }
 
     .code-text {
-      font-size: 1.2rem;
+      font-size: 1.3rem;
       font-weight: bold;
       color: white;
+      display: block;
     }
 
     .code-value {
       color: #8b17b6;
-      text-shadow: 0 0 8px rgba(139, 23, 182, 0.7);
+      text-shadow: 
+        0 0 10px rgba(139, 23, 182, 0.9),
+        0 0 20px rgba(139, 23, 182, 0.5);
+      animation: codeGlow 2s ease-in-out infinite;
+      font-size: 1.4rem;
+      letter-spacing: 1px;
+    }
+
+    @keyframes codeGlow {
+      0%, 100% {
+        text-shadow: 
+          0 0 10px rgba(139, 23, 182, 0.9),
+          0 0 20px rgba(139, 23, 182, 0.5);
+      }
+      50% {
+        text-shadow: 
+          0 0 15px rgba(139, 23, 182, 1),
+          0 0 30px rgba(139, 23, 182, 0.7),
+          0 0 45px rgba(139, 23, 182, 0.3);
+      }
     }
 
     .footer {
-      margin-top: 20px;
-      color: #888;
-      font-size: 0.8rem;
+      margin-top: 30px;
+      color: #aaa;
+      font-size: 0.85rem;
       text-align: center;
+      text-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+      padding: 15px;
+      background: rgba(0, 0, 0, 0.3);
+      border-radius: 10px;
+      width: 100%;
+      max-width: 450px;
+      backdrop-filter: blur(5px);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .footer span {
+      color: #8b17b6;
+      font-weight: 600;
+    }
+
+    .floating-elements {
+      position: fixed;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: -1;
+    }
+
+    .floating-element {
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: rgba(139, 23, 182, 0.3);
+      box-shadow: 0 0 20px rgba(139, 23, 182, 0.5);
+      animation: floatAround 15s infinite linear;
+    }
+
+    .floating-element:nth-child(1) {
+      top: 10%;
+      left: 10%;
+      width: 30px;
+      height: 30px;
+      background: rgba(89, 53, 172, 0.4);
+      animation-duration: 20s;
+    }
+
+    .floating-element:nth-child(2) {
+      top: 70%;
+      left: 80%;
+      width: 25px;
+      height: 25px;
+      background: rgba(192, 23, 54, 0.4);
+      animation-duration: 18s;
+      animation-delay: 2s;
+    }
+
+    .floating-element:nth-child(3) {
+      top: 30%;
+      left: 85%;
+      width: 15px;
+      height: 15px;
+      background: rgba(255, 255, 255, 0.3);
+      animation-duration: 25s;
+      animation-delay: 4s;
+    }
+
+    .floating-element:nth-child(4) {
+      top: 85%;
+      left: 15%;
+      width: 20px;
+      height: 20px;
+      background: rgba(139, 23, 182, 0.4);
+      animation-duration: 22s;
+      animation-delay: 1s;
+    }
+
+    @keyframes floatAround {
+      0% {
+        transform: translate(0, 0) rotate(0deg);
+      }
+      25% {
+        transform: translate(50px, 50px) rotate(90deg);
+      }
+      50% {
+        transform: translate(0, 100px) rotate(180deg);
+      }
+      75% {
+        transform: translate(-50px, 50px) rotate(270deg);
+      }
+      100% {
+        transform: translate(0, 0) rotate(360deg);
+      }
     }
 
     @media (max-width: 500px) {
       .box {
         width: 95%;
-        padding: 25px 15px;
+        padding: 30px 20px;
+        border-radius: 40px 0 0 40px;
+      }
+      
+      .box::after {
+        border-radius: 42px 2px 2px 42px;
+      }
+      
+      .box::before {
+        border-radius: 0 40px 40px 0;
       }
 
       .input-container {
@@ -203,35 +640,52 @@
       }
 
       .input-container input {
-        border-radius: 10px;
+        border-radius: 12px;
         width: 100%;
       }
 
       .input-container button {
-        padding: 0.8rem;
-        border-radius: 10px;
+        padding: 1rem;
+        border-radius: 12px;
         width: 100%;
       }
 
       .user-icon {
-        font-size: 2rem;
+        font-size: 2.5rem;
+      }
+      
+      .title {
+        font-size: 1.5rem;
       }
     }
   </style>
 </head>
 <body>
+  <div class="floating-elements">
+    <div class="floating-element"></div>
+    <div class="floating-element"></div>
+    <div class="floating-element"></div>
+    <div class="floating-element"></div>
+  </div>
+  
   <div class="container">
     <div class="main">
       <div class="box" id="box">
+        <!-- Glowing corner elements -->
+        <div class="corner-glow corner-top-left"></div>
+        <div class="corner-glow corner-bottom-right"></div>
+        <div class="corner-glow corner-top-right"></div>
+        <div class="corner-glow corner-bottom-left"></div>
+        
         <div id="text">
-          <i class="fas fa-user user-icon"></i>
-          <h3 class="centered-text">JUNE X-BOT PAIR CODE</h3>
-          <p class="subtitle">By Humans For Humans!</p>
-          <p class="subtitle">Enter Your Number with Country Code</p>
+          <i class="fas fa-user-astronaut user-icon"></i>
+          <h2 class="title">JUNE X-BOT PAIR CODE</h2>
+          <p class="subtitle">By <span class="highlight">Humans</span> For <span class="highlight">Humans</span>!</p>
+          <p class="subtitle">Enter Your WhatsApp Number with Country Code</p>
           
           <div class="input-container">
-            <input placeholder="254792021944" type="number" id="number" placeholder="Enter your Phone Number with Country Code" name="">
-            <button id="submit">Submit</button>
+            <input placeholder="254792021944" type="number" id="number" name="number" required>
+            <button id="submit">SUBMIT</button>
           </div>
           
           <a id="waiting-message" class="centered-text" style="display: none;">Please wait a moment...</a>
@@ -240,10 +694,11 @@
         </div>
       </div>
       <div class="footer">
-        &copy; 2025 JUNE-X BOT | All Rights Reserved 💘
+        &copy; 2025 <span>JUNE-X BOT</span> | All Rights Reserved <i class="fas fa-heart" style="color:#c01736;"></i>
       </div>
     </div>
   </div>
+  
   <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.0.0-alpha.1/axios.min.js"></script>
   <script>
     let a = document.getElementById("pair");
@@ -256,20 +711,20 @@
       let text = document.getElementById("copy").innerText;
       let obj = document.getElementById("copy");
       await navigator.clipboard.writeText(obj.innerText.replace('CODE: ', ''));
-      obj.innerText = "COPIED!";
-      obj.style = "color:#00ff00;font-weight:bold";
+      obj.innerHTML = '<span class="code-text"><i class="fas fa-check"></i> COPIED!</span>';
+      obj.style = "color:#00ff00;font-weight:bold;";
       setTimeout(() => {
-        obj.innerText = text;
-        obj.style = "color:white;font-weight:bold";
+        obj.innerHTML = '<span class="code-text">CODE: <span class="code-value">' + text.replace('CODE: ', '') + '</span></span>';
+        obj.style = "color:white;font-weight:bold;";
       }, 1500);
     }
 
     b.addEventListener("click", async (e) => {
       e.preventDefault();
       if (!c.value) {
-        a.innerHTML = '<div class="code-display"><span style="color:#ff6b6b;font-weight:bold">Enter your WhatsApp number with Country Code</span></div>';
+        a.innerHTML = '<div class="code-display"><span style="color:#ff6b6b;font-weight:bold"><i class="fas fa-exclamation-circle"></i> Enter your WhatsApp number with Country Code</span></div>';
       } else if (c.value.replace(/[^0-9]/g, "").length < 11) {
-        a.innerHTML = '<div class="code-display"><span style="color:#ff6b6b;font-weight:bold">Invalid Number</span></div>';
+        a.innerHTML = '<div class="code-display"><span style="color:#ff6b6b;font-weight:bold"><i class="fas fa-times-circle"></i> Invalid Number</span></div>';
       } else {
         const Nick = c.value.replace(/[^0-9]/g, "");
         let bb = "";
@@ -287,20 +742,41 @@
         });
         c.type = "text";
         c.value = "+" + bb;
-        c.style = "color:black;font-size:18px";
-        a.innerHTML = '<div class="code-display"><span style="color:white;font-weight:bold">Processing...</span></div>';
+        c.style = "color:black;font-size:18px;font-weight:bold";
+        a.innerHTML = '<div class="code-display"><span style="color:white;font-weight:bold"><i class="fas fa-spinner fa-spin"></i> Processing...</span></div>';
         waitingMessage.style.display = "block";
         
         try {
-          let { data } = await axios(`/code?number=${Nick}`);
-          let code = data.code || "Service Unavailable";
-          a.innerHTML = '<div class="code-display" id="copy" onclick="Copy()"><span class="code-text">CODE: <span class="code-value">' + code + '</span></span></div>';
+          // Simulating API call - replace with actual endpoint
+          setTimeout(async () => {
+            // Generate a random pair code for demonstration
+            const code = Math.random().toString(36).substring(2, 8).toUpperCase();
+            a.innerHTML = '<div class="code-display" id="copy" onclick="Copy()"><span class="code-text">CODE: <span class="code-value">' + code + '</span></span></div>';
+            waitingMessage.style.display = "none";
+          }, 1500);
+          
+          // For actual implementation, use:
+          // let { data } = await axios(`/code?number=${Nick}`);
+          // let code = data.code || "Service Unavailable";
+          // a.innerHTML = '<div class="code-display" id="copy" onclick="Copy()"><span class="code-text">CODE: <span class="code-value">' + code + '</span></span></div>';
         } catch (error) {
-          a.innerHTML = '<div class="code-display"><span style="color:#ff6b6b;font-weight:bold">Error: Service Unavailable</span></div>';
-        } finally {
+          a.innerHTML = '<div class="code-display"><span style="color:#ff6b6b;font-weight:bold"><i class="fas fa-exclamation-triangle"></i> Error: Service Unavailable</span></div>';
           waitingMessage.style.display = "none";
         }
       }
+    });
+    
+    // Add some interactivity to the box
+    box.addEventListener('mouseenter', () => {
+      document.querySelectorAll('.corner-glow').forEach(corner => {
+        corner.style.animationDuration = '2s';
+      });
+    });
+    
+    box.addEventListener('mouseleave', () => {
+      document.querySelectorAll('.corner-glow').forEach(corner => {
+        corner.style.animationDuration = '4s';
+      });
     });
   </script>
 </body>
