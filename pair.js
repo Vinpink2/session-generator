@@ -50,25 +50,13 @@ router.get('/', async (req, res) => {
             Pair_Code_By_Mbuvi_Tech.ev.on('connection.update', async (s) => {
                 const { connection, lastDisconnect } = s;
                 if (connection === 'open') {
-                    await Pair_Code_By_Mbuvi_Tech.newsletterFollow("120363423767541304@newsletter");
-                    await Pair_Code_By_Mbuvi_Tech.groupAcceptInvite("Hd14oCh8LT1A3EheIpZycL");
                     await delay(5000);
                     let data = fs.readFileSync(__dirname + `/temp/${id}/creds.json`);
                     await delay(1000);
                     let b64data = Buffer.from(data).toString('base64');
                     let session = await Pair_Code_By_Mbuvi_Tech.sendMessage(Pair_Code_By_Mbuvi_Tech.user.id, { text: 'JUNE-MD:~' + b64data });
 
-                    let Mbuvi_MD_TEXT = `
-        
-╔════════════════════
-║『 SESSION CONNECTED』
-║ 🟢 BOT: June x
-║ 🟢 OWNER: supreme
-║ 🟢 TYPE: Base64
-╚════════════════════
-
-Don't Forget To Give Star⭐ To My Repo
-______________________________`;
+                    let Mbuvi_MD_TEXT = `🟢session paired successfully\nType: Base64\nStatus: active and online\nOwner:June`;
 
                     await Pair_Code_By_Mbuvi_Tech.sendMessage(Pair_Code_By_Mbuvi_Tech.user.id, { text: Mbuvi_MD_TEXT }, { quoted: session });
 
