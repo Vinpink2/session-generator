@@ -8,7 +8,7 @@
     "scripts": {
     "start": "node index.js"
   },
-  "author": "vinpink2",
+  "author": "ARYAN",
   "license": "GPL-3.0 license",
   "dependencies": {
     "baileys-pro": "latest",
