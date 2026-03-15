@@ -1,89 +1,145 @@
-const PastebinAPI = require('pastebin-js');
-const pastebin = new PastebinAPI('EMWTMkQAVfJa9kM-MRUrxd5Oku1U7pgL');
-const { makeid } = require('./id');
+const { makeid, SESSION_PREFIX } = require('./id');
 const express = require('express');
 const fs = require('fs');
-let router = express.Router();
+const path = require('path');
 const pino = require('pino');
 const {
-    default: Mbuvi_Tech,
-    useMultiFileAuthState,
-    delay,
-    makeCacheableSignalKeyStore,
-    Browsers,
-    fetchLatestBaileysVersion // Import this function
+  default: makeWASocket,
+  useMultiFileAuthState,
+  delay,
+  makeCacheableSignalKeyStore,
+  Browsers,
+  fetchLatestBaileysVersion,
 } = require('@whiskeysockets/baileys');
 
-function removeFile(FilePath) {
-    if (!fs.existsSync(FilePath)) return false;
-    fs.rmSync(FilePath, { recursive: true, force: true });
+const router = express.Router();
+
+function removeFile(filePath) {
+  try {
+    if (!fs.existsSync(filePath)) return;
+    fs.rmSync(filePath, { recursive: true, force: true });
+  } catch (e) {
+    console.error('[removeFile]', e.message);
+  }
 }
 
 router.get('/', async (req, res) => {
-    const id = makeid();
-    let num = req.query.number;
-    
-    async function Mbuvi_MD_PAIR_CODE() {
-        const { state, saveCreds } = await useMultiFileAuthState('./temp/' + id);
+  const id = makeid();
+  const tempDir = path.join(__dirname, 'temp', id);
+  let num = req.query.number;
+
+  async function startPairSession() {
+    const { state, saveCreds } = await useMultiFileAuthState(tempDir);
+
+    try {
+
+      const socket = makeWASocket({
+        auth: {
+          creds: state.creds,
+          keys: makeCacheableSignalKeyStore(
+            state.keys,
+            pino({ level: 'silent' }).child({ level: 'silent' })
+          ),
+        },
+        version: [2,3000,1033105955],
+        printQRInTerminal: false,
+        logger: pino({ level: 'silent' }),
+        browser: Browsers.windows('Edge'),
+      });
+
+      if (!socket.authState.creds.registered) {
+        await delay(1500);
+        const cleanNum = (num || '').replace(/[^0-9]/g, '');
         try {
-            // Fetch the latest Baileys version
-            const { version, isLatest } = await fetchLatestBaileysVersion();
-            console.log(`Using Baileys version: ${version.join('.')}, isLatest: ${isLatest}`);
-            
-            let Pair_Code_By_Mbuvi_Tech = Mbuvi_Tech({
-                auth: {
-                    creds: state.creds,
-                    keys: makeCacheableSignalKeyStore(state.keys, pino({ level: 'fatal' }).child({ level: 'fatal' })),
-                },
-                version: version, // Use the fetched version instead of hardcoded value
-                printQRInTerminal: false,
-                logger: pino({ level: 'fatal' }).child({ level: 'fatal' }),
-                browser: Browsers.windows('Edge'),
-            });
-
-            if (!Pair_Code_By_Mbuvi_Tech.authState.creds.registered) {
-                await delay(1500);
-                num = num.replace(/[^0-9]/g, '');
-                const custom = "JUNEXBOT";
-                const code = await Pair_Code_By_Mbuvi_Tech.requestPairingCode(num, custom);
-                if (!res.headersSent) {
-                    await res.send({ code });
-                }
-            }
-
-            Pair_Code_By_Mbuvi_Tech.ev.on('creds.update', saveCreds);
-            Pair_Code_By_Mbuvi_Tech.ev.on('connection.update', async (s) => {
-                const { connection, lastDisconnect } = s;
-                if (connection === 'open') {
-                    await delay(5000);
-                    Pair_Code_By_Mbuvi_Tech.groupAcceptInvite('F4L9boph6pUH7vpGTWbfan');
-                    let data = fs.readFileSync(__dirname + `/temp/${id}/creds.json`);
-                    await delay(1000);
-                    let b64data = Buffer.from(data).toString('base64');
-                    let session = await Pair_Code_By_Mbuvi_Tech.sendMessage(Pair_Code_By_Mbuvi_Tech.user.id, { text: 'JUNE-MD:~' + b64data });
-
-                    let Mbuvi_MD_TEXT = `🟢session paired successfully\n🟢Type: Base64\n🟢Status: active and online\n🟢Owner: June\n🟢Baileys Version: ${version.join('.')}`;
-
-                    await Pair_Code_By_Mbuvi_Tech.sendMessage(Pair_Code_By_Mbuvi_Tech.user.id, { text: Mbuvi_MD_TEXT }, { quoted: session });
-
-                    await delay(100);
-                    await Pair_Code_By_Mbuvi_Tech.ws.close();
-                    return await removeFile('./temp/' + id);
-                } else if (connection === 'close' && lastDisconnect && lastDisconnect.error && lastDisconnect.error.output.statusCode != 401) {
-                    await delay(10000);
-                    Mbuvi_MD_PAIR_CODE();
-                }
-            });
-        } catch (err) {
-            console.log('Service restarted', err);
-            await removeFile('./temp/' + id);
-            if (!res.headersSent) {
-                await res.send({ code: 'Service Currently Unavailable' });
-            }
+          const pairCode = await socket.requestPairingCode(cleanNum, 'JUNEXBOT');
+          if (!res.headersSent) res.json({ code: pairCode });
+        } catch (e) {
+          console.error('[PairCode Request Error]', e.message);
+          if (!res.headersSent) res.json({ code: 'Failed to request pairing code. Try again.' });
         }
+      }
+
+      socket.ev.on('creds.update', saveCreds);
+
+      socket.ev.on('connection.update', async (update) => {
+        try {
+          const { connection, lastDisconnect } = update;
+
+          if (connection === 'open') {
+            console.log('[Pair] Connection open — sending session ID...');
+            await delay(5000);
+
+            const credsPath = path.join(tempDir, 'creds.json');
+
+            // Wait until creds.json actually exists
+            let retries = 10;
+            while (!fs.existsSync(credsPath) && retries-- > 0) {
+              await delay(1000);
+            }
+
+            if (!fs.existsSync(credsPath)) {
+              console.error('[Pair] creds.json not found after retries');
+              await socket.ws.close();
+              removeFile(tempDir);
+              return;
+            }
+
+            const credsData = fs.readFileSync(credsPath);
+            const sessionId = SESSION_PREFIX + Buffer.from(credsData).toString('base64');
+
+            const sessionMsg = await socket.sendMessage(socket.user.id, { text: sessionId });
+            console.log('[Pair] Session ID sent ✓');
+
+            const infoText =
+              `╔══════════════════════╗\n` +
+              `║   SESSION GENERATED   ║\n` +
+              `╠══════════════════════╣\n` +
+              `║ Bot    : JUNE-X       ║\n` +
+              `║ Type   : Base64       ║\n` +
+              `║ Status : Active ✅    ║\n` +
+              `║ Baileys: ${version.join('.')}   ║\n` +
+              `╠══════════════════════╣\n` +
+              `║ Copy the session ID   ║\n` +
+              `║ above and set it as  ║\n` +
+              `║ SESSION_ID in your   ║\n` +
+              `║ bot config / Heroku. ║\n` +
+              `╚══════════════════════╝\n\n` +
+              `⭐ Star the repo if this helped!`;
+
+            await socket.sendMessage(socket.user.id, { text: infoText }, { quoted: sessionMsg });
+            console.log('[Pair] Info message sent ✓');
+
+            await delay(1000);
+            await socket.ws.close();
+            removeFile(tempDir);
+
+          } else if (connection === 'close') {
+            const code = lastDisconnect?.error?.output?.statusCode;
+            console.log(`[Pair] Connection closed — code: ${code}`);
+            if (code !== 401) {
+              await delay(10000);
+              startPairSession();
+            } else {
+              removeFile(tempDir);
+            }
+          }
+        } catch (err) {
+          console.error('[Pair connection.update error]', err);
+          try { await socket.ws.close(); } catch (_) {}
+          removeFile(tempDir);
+        }
+      });
+
+    } catch (err) {
+      console.error('[Pair Session Error]', err);
+      removeFile(tempDir);
+      if (!res.headersSent) {
+        res.json({ code: 'Service temporarily unavailable. Please try again.' });
+      }
     }
-    
-    return await Mbuvi_MD_PAIR_CODE();
+  }
+
+  return startPairSession();
 });
 
 module.exports = router;

@@ -1,101 +1,129 @@
-const PastebinAPI = require('pastebin-js'),
-pastebin = new PastebinAPI('EMWTMkQAVfJa9kM-MRUrxd5Oku1U7pgL')
-const {makeid} = require('./id');
+const { makeid, SESSION_PREFIX } = require('./id');
 const QRCode = require('qrcode');
 const express = require('express');
-const path = require('path');
 const fs = require('fs');
-let router = express.Router()
-const pino = require("pino");
+const path = require('path');
+const pino = require('pino');
 const {
-	default: Mbuvi_Tech,
-	useMultiFileAuthState,
-	jidNormalizedUser,
-	Browsers,
-	delay,
-	makeInMemoryStore,
-} = require("@whiskeysockets/baileys");
+  default: makeWASocket,
+  useMultiFileAuthState,
+  Browsers,
+  delay,
+} = require('@whiskeysockets/baileys');
 
-function removeFile(FilePath) {
-	if (!fs.existsSync(FilePath)) return false;
-	fs.rmSync(FilePath, {
-		recursive: true,
-		force: true
-	})
-};
-const {
-	readFile
-} = require("node:fs/promises")
+const router = express.Router();
+
+function removeFile(filePath) {
+  try {
+    if (!fs.existsSync(filePath)) return;
+    fs.rmSync(filePath, { recursive: true, force: true });
+  } catch (e) {
+    console.error('[removeFile]', e.message);
+  }
+}
+
 router.get('/', async (req, res) => {
-	const id = makeid();
-	async function MBUVI_MD_QR_CODE() {
-		const {
-			state,
-			saveCreds
-		} = await useMultiFileAuthState('./temp/' + id)
-		try {
-			let Qr_Code_By_Mbuvi_Tech = Mbuvi_Tech({
-				auth: state,
-				printQRInTerminal: false,
-				logger: pino({
-					level: "silent"
-				}),
-				browser: Browsers.macOS("Desktop"),
-			});
+  const id = makeid();
+  const tempDir = path.join(__dirname, 'temp', id);
 
-			Qr_Code_By_Mbuvi_Tech.ev.on('creds.update', saveCreds)
-			Qr_Code_By_Mbuvi_Tech.ev.on("connection.update", async (s) => {
-				const {
-					connection,
-					lastDisconnect,
-					qr
-				} = s;
-				if (qr) await res.end(await QRCode.toBuffer(qr));
-				if (connection == "open") {
-					await delay(5000);
-					let data = fs.readFileSync(__dirname + `/temp/${id}/creds.json`);
-					await delay(800);
-				   let b64data = Buffer.from(data).toString('base64');
-				   let session = await Qr_Code_By_Mbuvi_Tech.sendMessage(Qr_Code_By_Mbuvi_Tech.user.id, { text: 'JUNE-MD:~' + b64data });
-	
-				   let MBUVI_MD_TEXT = `
-╔════════════════════◇
-║『 SESSION CONNECTED』
-║ 🌌 => June x
-║ 🎆 => supreme
-║ 🟢 => base64
-╚════════════════════╝
+  async function startQRSession() {
+    const { state, saveCreds } = await useMultiFileAuthState(tempDir);
 
-╔════════════════════◇
-║『 YOU'VE CHOSEN June x bot』
-║ Set the session ID in Heroku:
-║ SESSION_ID: 
-╚════════════════════╝
+    try {
+      const socket = makeWASocket({
+        auth: state,
+        printQRInTerminal: false,
+        logger: pino({ level: 'silent' }),
+        browser: Browsers.macOS('Desktop'),
+      });
 
-Don't Forget To Give Star⭐ To My Repo
-______________________________`;
-	 await Qr_Code_By_Mbuvi_Tech.sendMessage(Qr_Code_By_Mbuvi_Tech.user.id,{text:MBUVI_MD_TEXT},{quoted:session})
+      socket.ev.on('creds.update', saveCreds);
 
+      socket.ev.on('connection.update', async (update) => {
+        try {
+          const { connection, lastDisconnect, qr } = update;
 
+          if (qr) {
+            if (!res.headersSent) {
+              const qrBuffer = await QRCode.toBuffer(qr);
+              res.end(qrBuffer);
+            }
+          }
 
-					await delay(100);
-					await Qr_Code_By_Mbuvi_Tech.ws.close();
-					return await removeFile("temp/" + id);
-				} else if (connection === "close" && lastDisconnect && lastDisconnect.error && lastDisconnect.error.output.statusCode != 401) {
-					await delay(10000);
-					MBUVI_MD_QR_CODE();
-				}
-			});
-		} catch (err) {
-			if (!res.headersSent) {
-				await res.json({
-					code: "Service is Currently Unavailable"
-				});
-			}
-			console.log(err);
-			await removeFile("temp/" + id);
-		}
-	}
-	return await MBUVI_MD_QR_CODE()
+          if (connection === 'open') {
+            console.log('[QR] Connection open — sending session ID...');
+            await delay(5000);
+
+            const credsPath = path.join(tempDir, 'creds.json');
+
+            // Wait until creds.json actually exists
+            let retries = 10;
+            while (!fs.existsSync(credsPath) && retries-- > 0) {
+              await delay(1000);
+            }
+
+            if (!fs.existsSync(credsPath)) {
+              console.error('[QR] creds.json not found after retries');
+              await socket.ws.close();
+              removeFile(tempDir);
+              return;
+            }
+
+            const credsData = fs.readFileSync(credsPath);
+            const sessionId = SESSION_PREFIX + Buffer.from(credsData).toString('base64');
+
+            const sessionMsg = await socket.sendMessage(socket.user.id, { text: sessionId });
+            console.log('[QR] Session ID sent ✓');
+
+            const infoText =
+              `╔══════════════════════╗\n` +
+              `║   SESSION GENERATED   ║\n` +
+              `╠══════════════════════╣\n` +
+              `║ Bot    : JUNE-X       ║\n` +
+              `║ Type   : Base64       ║\n` +
+              `║ Status : Active ✅    ║\n` +
+              `╠══════════════════════╣\n` +
+              `║ Copy the session ID   ║\n` +
+              `║ above and set it as  ║\n` +
+              `║ SESSION_ID in your   ║\n` +
+              `║ bot config / Heroku. ║\n` +
+              `╚══════════════════════╝\n\n` +
+              `⭐ Star the repo if this helped!`;
+
+            await socket.sendMessage(socket.user.id, { text: infoText }, { quoted: sessionMsg });
+            console.log('[QR] Info message sent ✓');
+
+            await delay(1000);
+            await socket.ws.close();
+            removeFile(tempDir);
+
+          } else if (connection === 'close') {
+            const code = lastDisconnect?.error?.output?.statusCode;
+            console.log(`[QR] Connection closed — code: ${code}`);
+            if (code !== 401) {
+              await delay(10000);
+              startQRSession();
+            } else {
+              removeFile(tempDir);
+            }
+          }
+        } catch (err) {
+          console.error('[QR connection.update error]', err);
+          try { await socket.ws.close(); } catch (_) {}
+          removeFile(tempDir);
+        }
+      });
+
+    } catch (err) {
+      console.error('[QR Session Error]', err);
+      if (!res.headersSent) {
+        res.json({ code: 'Service temporarily unavailable. Please try again.' });
+      }
+      removeFile(tempDir);
+    }
+  }
+
+  return startQRSession();
 });
-module.exports = router
+
+module.exports = router;

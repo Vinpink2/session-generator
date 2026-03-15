@@ -6,12 +6,27 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Exo+2:wght@300;400;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
-    * {
+    *, *::before, *::after {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
+    }
+
+    :root {
+      --green: #00ffaa;
+      --blue: #0088ff;
+      --purple: #8800ff;
+      --dark: #020c1b;
+      --card: rgba(8, 22, 46, 0.75);
+      --border: rgba(0, 255, 170, 0.18);
+    }
+
+    html, body {
+      width: 100%;
+      min-height: 100vh;
     }
 
     body {
@@ -19,337 +34,407 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      min-height: 100vh;
-      margin: 0;
-      background-color: #000;
-      font-family: 'Exo 2', sans-serif;
-      color: #e5f5f1;
-      position: relative;
+      background: var(--dark);
+      font-family: 'Rajdhani', sans-serif;
+      color: #cde8e0;
       overflow-x: hidden;
     }
 
-    /* Glowing Background Elements */
-    .glowing-bg {
+    /* ── Canvas BG ── */
+    #bg-canvas {
       position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      z-index: -2;
-      overflow: hidden;
-    }
-
-    .glow-circle {
-      position: absolute;
-      border-radius: 50%;
-      filter: blur(60px);
-      opacity: 0.7;
-      animation: float 15s infinite linear;
-    }
-
-    .glow-circle:nth-child(1) {
-      width: 400px;
-      height: 400px;
-      background: radial-gradient(circle, rgba(0, 255, 170, 0.8) 0%, rgba(0, 255, 170, 0) 70%);
-      top: 10%;
-      left: 10%;
-      animation-duration: 20s;
-      animation-delay: 0s;
-    }
-
-    .glow-circle:nth-child(2) {
-      width: 500px;
-      height: 500px;
-      background: radial-gradient(circle, rgba(0, 136, 255, 0.7) 0%, rgba(0, 136, 255, 0) 70%);
-      top: 60%;
-      right: 5%;
-      animation-duration: 25s;
-      animation-delay: 5s;
-    }
-
-    .glow-circle:nth-child(3) {
-      width: 300px;
-      height: 300px;
-      background: radial-gradient(circle, rgba(255, 0, 255, 0.5) 0%, rgba(255, 0, 255, 0) 70%);
-      bottom: 10%;
-      left: 20%;
-      animation-duration: 18s;
-      animation-delay: 10s;
-    }
-
-    .glow-circle:nth-child(4) {
-      width: 450px;
-      height: 450px;
-      background: radial-gradient(circle, rgba(0, 255, 255, 0.6) 0%, rgba(0, 255, 255, 0) 70%);
-      top: 20%;
-      right: 20%;
-      animation-duration: 22s;
-      animation-delay: 15s;
-    }
-
-    .scan-lines {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(
-        to bottom,
-        transparent 50%,
-        rgba(0, 255, 170, 0.03) 50%
-      );
-      background-size: 100% 4px;
-      z-index: -1;
-      opacity: 0.3;
+      inset: 0;
+      z-index: 0;
       pointer-events: none;
     }
 
-    .grid-overlay {
+    /* ── Scanlines ── */
+    .scanlines {
       position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background-image: 
-        linear-gradient(rgba(0, 255, 170, 0.05) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(0, 255, 170, 0.05) 1px, transparent 1px);
-      background-size: 50px 50px;
-      z-index: -1;
-      opacity: 0.4;
-      pointer-events: none;
-    }
-
-    @keyframes float {
-      0%, 100% {
-        transform: translate(0, 0) scale(1);
-      }
-      25% {
-        transform: translate(30px, 40px) scale(1.1);
-      }
-      50% {
-        transform: translate(-20px, 60px) scale(0.9);
-      }
-      75% {
-        transform: translate(40px, -30px) scale(1.05);
-      }
-    }
-
-    .container {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      width: 90%;
-      max-width: 800px;
-      padding: 2rem;
-      background: rgba(10, 25, 47, 0.7);
-      backdrop-filter: blur(10px);
-      border-radius: 20px;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-      border: 1px solid rgba(0, 255, 170, 0.2);
-      position: relative;
-      overflow: hidden;
+      inset: 0;
       z-index: 1;
+      pointer-events: none;
+      background: repeating-linear-gradient(
+        to bottom,
+        transparent 0px,
+        transparent 3px,
+        rgba(0, 255, 170, 0.025) 3px,
+        rgba(0, 255, 170, 0.025) 4px
+      );
     }
 
-    .container::before {
+    /* ── Card ── */
+    .card {
+      position: relative;
+      z-index: 2;
+      width: 90%;
+      max-width: 720px;
+      padding: 3rem 2.5rem 2rem;
+      background: var(--card);
+      backdrop-filter: blur(18px);
+      border-radius: 20px;
+      border: 1px solid var(--border);
+      box-shadow:
+        0 0 40px rgba(0,255,170,0.08),
+        0 20px 60px rgba(0,0,0,0.6);
+      overflow: hidden;
+    }
+
+    /* top accent bar */
+    .card::before {
       content: '';
       position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 5px;
-      background: linear-gradient(90deg, #00ffaa, #0088ff, #00ffaa);
-      animation: shimmer 3s infinite linear;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--purple), var(--green), var(--blue), var(--green), var(--purple));
+      background-size: 300% 100%;
+      animation: barShimmer 4s linear infinite;
     }
 
-    @keyframes shimmer {
-      0% { background-position: -100% 0; }
-      100% { background-position: 200% 0; }
+    @keyframes barShimmer {
+      0%   { background-position: 0% 0%; }
+      100% { background-position: 300% 0%; }
+    }
+
+    /* corner brackets */
+    .card::after {
+      content: '';
+      position: absolute;
+      bottom: 0; right: 0;
+      width: 60px; height: 60px;
+      border-bottom: 2px solid rgba(0,255,170,0.25);
+      border-right: 2px solid rgba(0,255,170,0.25);
+      border-radius: 0 0 20px 0;
+    }
+
+    .corner-tl {
+      position: absolute;
+      top: 0; left: 0;
+      width: 60px; height: 60px;
+      border-top: 2px solid rgba(0,255,170,0.25);
+      border-left: 2px solid rgba(0,255,170,0.25);
+      border-radius: 20px 0 0 0;
+      z-index: 3;
+    }
+
+    /* ── Logo / Title ── */
+    .logo-wrap {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+      margin-bottom: 0.4rem;
+    }
+
+    .logo-icon {
+      width: 52px;
+      height: 52px;
+      border-radius: 14px;
+      background: linear-gradient(135deg, var(--green), var(--blue));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      color: #020c1b;
+      box-shadow: 0 0 20px rgba(0,255,170,0.4);
+      animation: logoPulse 3s ease-in-out infinite;
+    }
+
+    @keyframes logoPulse {
+      0%, 100% { box-shadow: 0 0 20px rgba(0,255,170,0.4); }
+      50%       { box-shadow: 0 0 35px rgba(0,255,170,0.7), 0 0 60px rgba(0,136,255,0.3); }
     }
 
     .title {
       font-family: 'Orbitron', sans-serif;
-      font-size: 2.5rem;
+      font-size: clamp(1.6rem, 5vw, 2.6rem);
       font-weight: 900;
-      margin-bottom: 1.5rem;
-      text-align: center;
-      text-transform: uppercase;
-      letter-spacing: 3px;
-      background: linear-gradient(90deg, #00ffaa, #0088ff);
+      letter-spacing: 4px;
+      background: linear-gradient(90deg, var(--green) 0%, var(--blue) 50%, var(--green) 100%);
+      background-size: 200% 100%;
       -webkit-background-clip: text;
       background-clip: text;
       color: transparent;
-      text-shadow: 0 0 10px rgba(0, 255, 170, 0.3);
+      animation: titleFlow 5s linear infinite;
     }
 
-    .subtitle {
-      font-size: 1.2rem;
-      margin-bottom: 2.5rem;
+    @keyframes titleFlow {
+      0%   { background-position: 0% 0%; }
+      100% { background-position: 200% 0%; }
+    }
+
+    .badge {
+      display: inline-block;
+      background: rgba(0,255,170,0.12);
+      border: 1px solid rgba(0,255,170,0.3);
+      border-radius: 100px;
+      padding: 4px 14px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 2px;
+      color: var(--green);
+      text-transform: uppercase;
+      margin: 0.8rem auto 2rem;
       text-align: center;
-      font-weight: 300;
-      max-width: 600px;
-      line-height: 1.6;
+      display: table;
     }
 
-    .buttons-container {
+    /* ── Divider ── */
+    .divider {
+      width: 100%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--border), transparent);
+      margin-bottom: 2rem;
+    }
+
+    /* ── Subtitle ── */
+    .subtitle {
+      text-align: center;
+      font-size: 1.05rem;
+      font-weight: 400;
+      color: rgba(205, 232, 224, 0.7);
+      margin-bottom: 2rem;
+      line-height: 1.7;
+    }
+
+    /* ── Buttons ── */
+    .buttons {
       display: flex;
       flex-wrap: wrap;
       justify-content: center;
-      gap: 1.5rem;
+      gap: 1.2rem;
       width: 100%;
     }
 
     .btn {
-      --color: #e5f5f1;
-      --color2: #0a192f;
-      width: 220px;
-      padding: 1.2em 2em;
-      background: rgba(0, 255, 170, 0.1);
-      border-radius: 12px;
-      border: 1px solid rgba(0, 255, 170, 0.3);
-      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
       position: relative;
-      overflow: hidden;
-      cursor: pointer;
-      z-index: 1;
-      font-weight: 600;
-      font-size: 1rem;
-      font-family: 'Exo 2', sans-serif;
+      width: 200px;
+      padding: 1rem 1.4rem;
+      border-radius: 12px;
+      border: 1px solid rgba(0,255,170,0.25);
+      background: rgba(0,255,170,0.06);
+      color: #cde8e0;
+      font-family: 'Rajdhani', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 700;
+      letter-spacing: 1.5px;
       text-transform: uppercase;
-      letter-spacing: 1px;
-      color: var(--color);
-      margin-bottom: 0;
-      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-    }
-
-    .btn::after, .btn::before {
-      content: '';
-      display: block;
-      height: 100%;
-      width: 100%;
-      transform: skew(90deg) translate(-50%, -50%);
-      position: absolute;
-      inset: 50%;
-      left: 25%;
-      z-index: -1;
-      transition: .5s ease-out;
-      background: linear-gradient(45deg, #00ffaa, #0088ff);
-    }
-
-    .btn::before {
-      top: -50%;
-      left: -25%;
-      transform: skew(90deg) rotate(180deg) translate(-50%, -50%);
-    }
-
-    .btn:hover::before {
-      transform: skew(45deg) rotate(180deg) translate(-50%, -50%);
-    }
-
-    .btn:hover::after {
-      transform: skew(45deg) translate(-50%, -50%);
-    }
-
-    .btn:hover {
-      color: var(--color2);
-      transform: translateY(-5px);
-      box-shadow: 0 10px 20px rgba(0, 255, 170, 0.3);
-    }
-
-    .btn:active {
-      filter: brightness(.9);
-      transform: scale(.98) translateY(-2px);
+      cursor: pointer;
+      overflow: hidden;
+      transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
     }
 
     .btn i {
       margin-right: 8px;
-      font-size: 1.2em;
     }
 
+    .btn .btn-glow {
+      position: absolute;
+      inset: 0;
+      border-radius: 12px;
+      background: linear-gradient(135deg, var(--green), var(--blue));
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      z-index: -1;
+    }
+
+    .btn:hover {
+      transform: translateY(-4px);
+      border-color: var(--green);
+      box-shadow: 0 8px 28px rgba(0,255,170,0.25);
+      color: #020c1b;
+    }
+
+    .btn:hover .btn-glow {
+      opacity: 1;
+    }
+
+    .btn:active {
+      transform: translateY(-2px) scale(0.98);
+    }
+
+    .btn.pulse {
+      animation: btnPulse 2.5s ease-in-out infinite;
+    }
+
+    @keyframes btnPulse {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(0,255,170,0.35); }
+      50%       { box-shadow: 0 0 0 8px rgba(0,255,170,0); }
+    }
+
+    /* ── Footer ── */
     .footer {
       margin-top: 2.5rem;
+      padding-top: 1.2rem;
+      border-top: 1px solid var(--border);
       text-align: center;
-      font-size: 0.9rem;
-      color: rgba(229, 245, 241, 0.7);
-      padding: 1rem;
-      border-top: 1px solid rgba(0, 255, 170, 0.2);
-      width: 100%;
+      font-size: 0.82rem;
+      color: rgba(205, 232, 224, 0.45);
+      letter-spacing: 1px;
     }
 
-    .pulse {
-      animation: pulse 2s infinite;
+    .footer span {
+      color: var(--green);
     }
 
-    @keyframes pulse {
-      0% { box-shadow: 0 0 0 0 rgba(0, 255, 170, 0.4); }
-      70% { box-shadow: 0 0 0 10px rgba(0, 255, 170, 0); }
-      100% { box-shadow: 0 0 0 0 rgba(0, 255, 170, 0); }
-    }
-
-    @media (max-width: 768px) {
-      .title {
-        font-size: 2rem;
+    /* ── Responsive ── */
+    @media (max-width: 560px) {
+      .card {
+        padding: 2.2rem 1.4rem 1.6rem;
       }
-      
-      .subtitle {
-        font-size: 1rem;
-      }
-      
       .btn {
         width: 100%;
         max-width: 300px;
       }
-      
-      .buttons-container {
+      .buttons {
         flex-direction: column;
         align-items: center;
       }
-      
-      .glow-circle {
-        filter: blur(40px);
-      }
-      
-      .glow-circle:nth-child(1),
-      .glow-circle:nth-child(2),
-      .glow-circle:nth-child(3),
-      .glow-circle:nth-child(4) {
-        width: 250px;
-        height: 250px;
-      }
     }
   </style>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
-  <!-- Glowing Background Elements -->
-  <div class="glowing-bg">
-    <div class="glow-circle"></div>
-    <div class="glow-circle"></div>
-    <div class="glow-circle"></div>
-    <div class="glow-circle"></div>
-  </div>
-  
-  <!-- Scan lines effect -->
-  <div class="scan-lines"></div>
-  
-  <!-- Grid overlay -->
-  <div class="grid-overlay"></div>
+  <canvas id="bg-canvas"></canvas>
+  <div class="scanlines"></div>
 
-  <div class="container">
-    <h1 class="title">JUNE-X SESSION</h1>
-    <p class="subtitle">Choose your preferred option below.</p>
-    
-    <div class="buttons-container">
-      <button onclick="window.open(`/pair`)" class="btn pulse"><i class="fas fa-link"></i> PAIR CODE</button>
-      <button onclick="window.open(`/qr`)" class="btn"><i class="fas fa-qrcode"></i> QR SCAN</button>
-      <button onclick="window.open(`https://github.com/vinpink2/JUNE-X/fork`)" class="btn"><i class="fab fa-github"></i> REPO FORK</button>
+  <div class="card">
+    <div class="corner-tl"></div>
+
+    <div class="logo-wrap">
+      <div class="logo-icon"><i class="fas fa-robot"></i></div>
+      <h1 class="title">JUNE-X</h1>
     </div>
-    
+
+    <div class="badge">Session Generator</div>
+    <div class="divider"></div>
+
+    <p class="subtitle">
+      Generate a secure WhatsApp session ID for your bot.<br>
+      Choose your preferred authentication method below.
+    </p>
+
+    <div class="buttons">
+      <button onclick="window.open('/pair')" class="btn pulse">
+        <span class="btn-glow"></span>
+        <i class="fas fa-link"></i> Pair Code
+      </button>
+      <button onclick="window.open('/qr')" class="btn">
+        <span class="btn-glow"></span>
+        <i class="fas fa-qrcode"></i> QR Scan
+      </button>
+      <button onclick="window.open('https://github.com/vinpink2/JUNE-X/fork')" class="btn">
+        <span class="btn-glow"></span>
+        <i class="fab fa-github"></i> Fork Repo
+      </button>
+    </div>
+
     <div class="footer">
-      <p>JUNE-X &copy; 2025 | Secure connection </p>
+      JUNE-X &copy; 2025 &mdash; <span>Secure</span> &bull; <span>Fast</span> &bull; <span>Open Source</span>
     </div>
   </div>
 
+  <script>
+    // Spiral glow canvas background
+    const canvas = document.getElementById('bg-canvas');
+    const ctx = canvas.getContext('2d');
+    let W, H, t = 0;
+
+    const SPIRALS = [
+      { arms: 3, speed: 0.0018, radius: 0.42, hue: 160, hueShift: 40,  width: 1.8, alpha: 0.55, dir:  1 },
+      { arms: 4, speed: 0.0012, radius: 0.36, hue: 200, hueShift: 50,  width: 1.4, alpha: 0.45, dir: -1 },
+      { arms: 2, speed: 0.0025, radius: 0.28, hue: 270, hueShift: 60,  width: 1.2, alpha: 0.38, dir:  1 },
+      { arms: 5, speed: 0.0010, radius: 0.50, hue: 180, hueShift: 30,  width: 0.9, alpha: 0.28, dir: -1 },
+    ];
+
+    const GLOWS = [
+      { ox: -0.25, oy: -0.22, r: 0.32, color: [0, 255, 170],   alpha: 0.18 },
+      { ox:  0.28, oy:  0.20, r: 0.28, color: [0, 136, 255],   alpha: 0.16 },
+      { ox:  0.00, oy:  0.00, r: 0.20, color: [123, 47, 255],  alpha: 0.22 },
+      { ox: -0.30, oy:  0.28, r: 0.22, color: [0, 210, 255],   alpha: 0.12 },
+      { ox:  0.32, oy: -0.25, r: 0.24, color: [0, 255, 130],   alpha: 0.13 },
+    ];
+
+    function resize() {
+      W = canvas.width  = window.innerWidth;
+      H = canvas.height = window.innerHeight;
+    }
+
+    function drawGlows() {
+      const cx = W / 2, cy = H / 2;
+      const base = Math.min(W, H);
+      GLOWS.forEach((g, i) => {
+        const pulse = 0.85 + 0.15 * Math.sin(t * 0.8 + i * 1.3);
+        const gr = ctx.createRadialGradient(
+          cx + g.ox * base, cy + g.oy * base, 0,
+          cx + g.ox * base, cy + g.oy * base, g.r * base * pulse
+        );
+        const [r, gg, b] = g.color;
+        gr.addColorStop(0,   `rgba(${r},${gg},${b},${g.alpha * pulse})`);
+        gr.addColorStop(0.5, `rgba(${r},${gg},${b},${g.alpha * 0.4 * pulse})`);
+        gr.addColorStop(1,   `rgba(${r},${gg},${b},0)`);
+        ctx.fillStyle = gr;
+        ctx.beginPath();
+        ctx.ellipse(
+          cx + g.ox * base, cy + g.oy * base,
+          g.r * base * pulse, g.r * base * 0.85 * pulse,
+          i * 0.6, 0, Math.PI * 2
+        );
+        ctx.fill();
+      });
+    }
+
+    function drawSpiral(s, offset) {
+      const cx = W / 2, cy = H / 2;
+      const maxR = Math.min(W, H) * s.radius;
+      const turns = 4.5;
+      const steps = 320;
+
+      for (let arm = 0; arm < s.arms; arm++) {
+        const armAngle = (Math.PI * 2 / s.arms) * arm;
+
+        ctx.beginPath();
+        let first = true;
+
+        for (let i = 0; i <= steps; i++) {
+          const frac  = i / steps;
+          const angle = frac * turns * Math.PI * 2 * s.dir + armAngle + offset;
+          const r     = frac * maxR;
+          const x     = cx + Math.cos(angle) * r;
+          const y     = cy + Math.sin(angle) * r;
+
+          if (first) { ctx.moveTo(x, y); first = false; }
+          else ctx.lineTo(x, y);
+        }
+
+        const hue  = (s.hue + arm * (360 / s.arms) + t * 30) % 360;
+        const hue2 = (hue + s.hueShift) % 360;
+
+        ctx.shadowBlur  = 18;
+        ctx.shadowColor = `hsla(${hue},100%,65%,0.6)`;
+        ctx.strokeStyle = `hsla(${hue2},100%,70%,${s.alpha})`;
+        ctx.lineWidth   = s.width;
+        ctx.stroke();
+        ctx.shadowBlur  = 0;
+      }
+    }
+
+    function draw() {
+      ctx.clearRect(0, 0, W, H);
+
+      drawGlows();
+
+      const time = t;
+      SPIRALS.forEach((s, i) => {
+        drawSpiral(s, time * s.speed * Math.PI * 2 * 1000 + i);
+      });
+
+      t += 0.012;
+      requestAnimationFrame(draw);
+    }
+
+    window.addEventListener('resize', resize);
+    resize();
+    draw();
+  </script>
 </body>
 </html>
