@@ -1,5 +1,5 @@
 {
-    "description": "June X Ultra by Supreme — Session Generator Telegram Bot",
+    "description": "Session Generator Telegram Bot",
     "main": "./bot.js",
     "engines": {
         "npm": ">=9.7.2",
