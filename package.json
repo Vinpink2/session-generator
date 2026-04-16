@@ -1,0 +1,22 @@
+{
+    "description": "June X Ultra by Supreme — Session Generator Telegram Bot",
+    "main": "./bot.js",
+    "engines": {
+        "npm": ">=9.7.2",
+        "node": ">=20.0.0"
+    },
+    "scripts": {
+        "start": "node bot.js"
+    },
+    "author": "Supreme",
+    "license": "GPL-3.0 license",
+    "dependencies": {
+        "@whiskeysockets/baileys": "^7.0.0-rc.9",
+        "awesome-phonenumber": "^2.64.0",
+        "dotenv": "^16.0.0",
+        "lolcatjs": "^2.4.3",
+        "moment-timezone": "^0.6.1",
+        "node-telegram-bot-api": "^0.66.0",
+        "pino": "^8.1.0"
+    }
+}
